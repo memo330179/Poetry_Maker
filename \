@@ -54,17 +54,11 @@ class Poetry_finder():
     def findAcrostic(self, acrostic):
         index = 0
         for sentence in self.lines:
-            try:
-                lower = sentence[0].lower()
-                if acrostic[index] == lower:
+                if acrostic[index] == sentence[0]:
                     self.tmpQueue.enqueue(sentence)
                     index += 1
                     print ("hello")
-            except IndexError:
-                for i in range(self.tmpQueue.size()):
-                    sentence = self.tmpQueue.dequeue()
-                    print(sentence)
-                    index = 0
+
     def printHaiku(self):
         for i in range(self.queue.size()):
             print (self.queue.dequeue())
