@@ -1,7 +1,7 @@
 #all of the imports
-import nltk 
-import nltk.data 
-from nltk.corpus import wordnet as wn  
+import nltk
+import nltk.data
+from nltk.corpus import wordnet as wn
 from nltk.corpus import cmudict
 from queue import Queue
 import re
@@ -10,7 +10,7 @@ from curses.ascii import isdigit
 import string
 import urllib
 from bs4 import BeautifulSoup
-import os
+#import os
 
 class Poetry_finder():
     def __init__(self, inputfile = "test"):
@@ -31,11 +31,11 @@ class Poetry_finder():
         state = 0 # state 0 means that we are looking for the first sentence
         for sentence in self.lines: # iterate through the sentences
             syls = self.syllable_count_fail(sentence) #syllables counted
-            if (state ==  0) and  (syls == 5): # looking for 5 syllables 
-                self.queue.enqueue(sentence) # enqueue the sentence 
+            if (state ==  0) and  (syls == 5): # looking for 5 syllables
+                self.queue.enqueue(sentence) # enqueue the sentence
                 self.tmpQueue.enqueue(sentence) # temporarily enqueue the sentence
 
-                state = 1 
+                state = 1
             elif (state == 1) and (syls == 7): # looking for a seven syllable sentence if the first one has beem found
                  self.tmpQueue.enqueue(sentence)
                  self.queue.enqueue(sentence)
@@ -45,14 +45,15 @@ class Poetry_finder():
                 self.tmpQueue.enqueue(sentence)
                 state = 3
             if state == 3: # a haiku has been found
-                for i in range(self.tmpQueue.size()): # dequeue the temporary
-                    line = self.tmpQueue.dequeue() 
-                    print(line) #print for the viewer
-                    #speak = self.speak("'"+line+"'") # uncommment to have linux read it
-                print("--------") # print a pretty little divider
-                self.queue.enqueue("------------") #add a pretty little divider
-                state = 0 # start again
-        #self.printHaiku()
+                if self.tmpQueue.size() == 3:
+                    for i in range(self.tmpQueue.size()): # dequeue the temporary
+                        line = self.tmpQueue.dequeue()
+                        print(line) #print for the viewer
+                        #speak = self.speak("'"+line+"'") # uncommment to have linux read it
+                    print("--------") # print a pretty little divider
+                    self.queue.enqueue("------------") #add a pretty little divider
+                    state = 0 # start again
+
     def findAcrostic(self, acrostic):
         index = 0 # start an index
         for sentence in self.lines: # irerate through the sentence
@@ -60,22 +61,24 @@ class Poetry_finder():
                 lower = sentence[0].lower() # make sure the first letter is lowered
                 if acrostic[index].lower() == lower: # if the acrostic word is the same as the first letter
                     self.tmpQueue.enqueue(sentence) # add to the queue
+                    self.queue.enqueue()
                     index += 1 # find next letter
             except IndexError: # we will reach the end of the word
                 for i in range(self.tmpQueue.size()):
                     sentence = self.tmpQueue.dequeue()
+                    self.queue.enqueue()
                     print(sentence)
                     index = 0
     def printHaiku(self): # print the haiku
         for i in range(self.queue.size()):
             print (self.queue.dequeue())
-    
-    
+
+
     def sentence_finder(self):
         """This function will divide the input file into sentences and organize them"""
         tokenizer = nltk.data.load('tokenizers/punkt/english.pickle') # load the tokenizer
         fp = open(self.inputfile) #open the file
-        data = fp.read() 
+        data = fp.read()
 
         self.lines= tokenizer.tokenize(data) # divide into sentences
 
@@ -133,6 +136,6 @@ class Poetry_finder():
         """Splits the sentence into words"""
         for sentences in self.line_no_punct:
             self.words.append(sentences[0].split())
-    def speak(self, text):
+    #def speak(self, text):
         #speaks for linux
-        return os.system("espeak  -s 155 -a 200 "+text+" " )
+        #return os.system("espeak  -s 155 -a 200 "+text+" " )

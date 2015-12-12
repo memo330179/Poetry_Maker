@@ -32,5 +32,14 @@ def main():
 
         sentences.findHaiku()
 
+    print("Would you like to see the poems again?")
+
+    choice = str(input("Type yes to play again " ))
+
+    if choice == "yes":
+        sentences.printhaiku()
+
+
+
 
 main()
